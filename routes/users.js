@@ -1,3 +1,12 @@
+// MOD 14 LAB 1 ACTIVITY --- add these routes -- they need to be protected--add verifyJWT---//
+// everytime--login and get fresh token---make sure verified
+// router.get("/:id);
+// adding router.get("/allusers") public
+// adding router.get("/allusers/protected") with verifyJWT --protected route
+// router.patch();
+// router.delete();
+//? how to generate/store locally the tokens in postman---follow david's guidance//
+
 import express from "express";
 import User from "../models/User.js";
 import jwt from 'jsonwebtoken';
@@ -23,6 +32,7 @@ router.get("/", verifyJWT,(req, res) => {
 });
 
 // GET all users - public route--list of all users that anyone can see//
+// Method: GET//
 router.get("/allusers", async (req, res) => {
   try {
     // used the project or .select to not include the password when responding with list//
@@ -37,6 +47,7 @@ router.get("/allusers", async (req, res) => {
 });
 
 // GET all users - protected route---list of all users that only authenticated users can see//
+// Method: GET//
 router.get("/allusers/protected", verifyJWT, async (req, res) => {
   try {
      // used the project or .select to not include the password when responding with list//
@@ -52,6 +63,8 @@ router.get("/allusers/protected", verifyJWT, async (req, res) => {
 
 
 // Register new user - public route//
+// REGISTER: 
+// Method: POST//
 router.post("/register", async (req, res) => {
   try {
     const newUser = await User.create(req.body);
@@ -63,17 +76,13 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// MOD 14 LAB 1 ACTIVITY --- add these routes -- they need to be protected--add verifyJWT---//
-// everytime--login and get fresh token---make sure verified
-// router.get("/:id);
-// adding router.get("/allusers") public
-// adding router.get("/allusers/protected") with verifyJWT --protected route
-// router.patch();
-// router.delete();
-// how to generate/store locally the tokens in postman---follow david's guidance//
 
 
 // Login user - public route//
+// adding the create token/payload here as login route is the only route that 
+// creates the tokens---the other protected routes will utilize or verify the token(s) created here//
+// LOGIN --
+// method: POST//
 router.post("/login", async (req, res) => {
   const {email, password} = req.body;
   try {
@@ -113,6 +122,7 @@ router.post("/login", async (req, res) => {
 });
 
 // Get user by ID - protected route//
+// method: GET//
 router.get("/:id", verifyJWT, async (req, res) => {
   try {
   const user = await User.findById(req.params.id).select("-password");
@@ -125,6 +135,26 @@ router.get("/:id", verifyJWT, async (req, res) => {
   console.error(error);
   res.status(500).json({ error: "Internal Server Error "});
 }
+});
+
+// update user profile route---protected route//
+// method: PATCH//
+router.patch("/:id", verifyJWT, async (req,res) => {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+    { new: true }
+  ).select("-password");
+
+  if(!updatedUser) {
+    return res.status(404).json({ message: "User not found"});
+  }
+  res.json(updatedUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 export default router;
