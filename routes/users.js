@@ -157,4 +157,19 @@ router.patch("/:id", verifyJWT, async (req,res) => {
   }
 });
 
+// Delete user --protected route//
+// Method: Delete//
+router.delete("/:id", verifyJWT, async (req,res) =>{
+  try {
+    const deleteUser = await User.findByIdAndDelete(req.params.id)
+    if (!deleteUser) {
+      return res.status(404).json({ message: "User not found"});
+    }
+    res.json({ messaeg: "User deleted successfullly" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error"});
+  }
+});
+
 export default router;
