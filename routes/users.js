@@ -22,6 +22,19 @@ router.get("/", verifyJWT,(req, res) => {
   res.json(req.user);
 });
 
+// GET all users - public route//
+router.get("/allusers", async (req, res) => {
+  try {
+    const users = await User.find({}).select('-password');
+    res.json(users);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error"});
+    
+  }
+});
+
 // Register new user - public route//
 router.post("/register", async (req, res) => {
   try {
@@ -37,8 +50,11 @@ router.post("/register", async (req, res) => {
 // MOD 14 LAB 1 ACTIVITY --- add these routes -- they need to be protected--add verifyJWT---//
 // everytime--login and get fresh token---make sure verified
 // router.get("/:id);
+// adding router.get("/allusers") public
+// adding router.get("/allusers/protected") with verifyJWT --protected route
 // router.patch();
 // router.delete();
+// how to generate/store locally the tokens in postman---follow david's guidance//
 
 
 // Login user - public route//
