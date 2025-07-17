@@ -22,9 +22,10 @@ router.get("/", verifyJWT,(req, res) => {
   res.json(req.user);
 });
 
-// GET all users - public route//
+// GET all users - public route--list of all users that anyone can see//
 router.get("/allusers", async (req, res) => {
   try {
+    // used the project or .select to not include the password when responding with list//
     const users = await User.find({}).select('-password');
     res.json(users);
 
@@ -34,6 +35,21 @@ router.get("/allusers", async (req, res) => {
     
   }
 });
+
+// GET all users - protected route---list of all users that only authenticated users can see//
+router.get("/allusers/protected", verifyJWT, async (req, res) => {
+  try {
+     // used the project or .select to not include the password when responding with list//
+    const users = await User.find({}).select("-password");
+    res.json(users);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error"});
+    
+  }
+});
+
 
 // Register new user - public route//
 router.post("/register", async (req, res) => {
