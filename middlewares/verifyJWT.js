@@ -6,9 +6,10 @@ dotenv.config();
 const secret = process.env.JWT_SECRET;
 
 export default function verifyJWT(req, res, next) {
-  let token = req.headers.authorization;
+  let token = req.headers.authorization || req.body.token || req.query.token;
   // Bearer <token> //
   if(token) {
+    // taking token spliting from space--remove space--and trimming it so just token returns instead of "bearer and space"
     token = token.split(" ").pop().trim();
   }
 if (!token) {

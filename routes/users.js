@@ -18,13 +18,25 @@ dotenv.config();
 const router = express.Router();
 // router.user(verifyJWT);---don't need this as only need at routes that need authentication---so adding verifyJWT at specific route levels that need authentication//
 
-
 const secret = process.env.JWT_SECRET;
 
 const expiration = "2h";
 
+
+router.get("/profile", verifyJWT, async (req, res) => {
+  try {
+    console.log("req.user", req.user);
+    
+    const user = await User.findById(req.user._id);
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // add verifyJWT here as its where we get a user--to verify here on this route//
-// GET current user - protected route//
+// GET current user - protected route---by using the middleware verifyJWT-//
 router.get("/", verifyJWT,(req, res) => {
   console.log("USER", req.user);
 
