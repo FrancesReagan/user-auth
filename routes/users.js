@@ -38,7 +38,7 @@ router.get("/profile", verifyJWT, async (req, res) => {
 // add verifyJWT here as its where we get a user--to verify here on this route//
 // GET current user - protected route---by using the middleware verifyJWT-//
 router.get("/", verifyJWT,(req, res) => {
-  console.log("USER", req.user);
+  console.log("USER", req.user); 
 
   res.json(req.user);
 });
